@@ -1,3 +1,4 @@
+from langchain_text_splitters import RecursiveCharacterTextSplitter, Language
 from typing import List
 from __future__ import annotations
 from tree_sitter_languages import get_language, get_parser
@@ -94,21 +95,25 @@ def chunker(
 
 
 
-def split_code2docs(text: str) -> List[str]:
-    #TODO use lang guesses
+def split_code2docs(text: str, lang: str = "python") -> List[str]:
+    try:
 
-    language = get_language("python")
-    parser = get_parser("python")
-    
-    tree = parser.parse(text.encode("utf-8"))
-    res = []
-    for chunk in chunker(tree, text):
-        res.append(chunk.extract_lines(text))
-    return res
+        language = get_language(lang)
+        parser = get_parser(lang)
+        
+        tree = parser.parse(text.encode("utf-8"))
+        res = []
+        for chunk in chunker(tree, text):
+            res.append(chunk.extract_lines(text))
+        return res
+    except:
+        splitter = RecursiveCharacterTextSplitter.from_language(
+        language=Language.MARKDOWN ,chunk_size=1256, chunk_overlap=32)
+        docs = splitter.create_documents([text])
+        return [d.page_content for d in docs]
 
 
-
-def split_docs(text: str) -> List[Document]:
+def split_docs(text: str) -> List[str]:
     splitter = RecursiveCharacterTextSplitter.from_language(
         language=Language.MARKDOWN ,chunk_size=128, chunk_overlap=32)
     

@@ -4,7 +4,7 @@ from pipeline import Pipeline
 import json
 import pika
 import time
-from parsing import get_text_from_pdf
+from app.parsing import get_text_from_pdf
 from pika.adapters.blocking_connection import BlockingChannel
 from pika.spec import Basic
 import logging
@@ -41,12 +41,12 @@ def on_message(channel: BlockingChannel, method: Basic.Deliver,
     doc = get_text_from_pdf(instructions)
     store = StorageBM()
     store.add(doc)
-    res = pipeline("code", store)
+    report = pipeline(chunks, store)
 
 
     send = {
         "request_id": id,
-        "report_content": "test",
+        "report_content": report.format(last_date),
         "status": "success"
     }
     session.publish(

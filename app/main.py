@@ -9,6 +9,7 @@ from pika.adapters.blocking_connection import BlockingChannel
 from pika.spec import Basic
 import logging
 from vectorstore import StorageBM
+from project_parser import split_proj_to_chunks
 
 
 session = Session()
@@ -35,7 +36,7 @@ def on_message(channel: BlockingChannel, method: Basic.Deliver,
     target_file = value["target_file_url"]
     instructions = value["instructions_file_url"]
     last_date = value["last_modified_dttm"]
-
+    chunks = split_proj_to_chunks(id, target_file)
 
     doc = get_text_from_pdf(instructions)
     store = StorageBM()

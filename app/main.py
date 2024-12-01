@@ -4,10 +4,12 @@ from pipeline import Pipeline
 import json
 import pika
 import time
+from parsing import get_text_from_pdf
 from pika.adapters.blocking_connection import BlockingChannel
 from pika.spec import Basic
 import logging
 from vectorstore import StorageBM
+
 
 session = Session()
 pipeline = Pipeline()
@@ -35,11 +37,10 @@ def on_message(channel: BlockingChannel, method: Basic.Deliver,
     last_date = value["last_modified_dttm"]
 
 
-
-    # store = StorageBM()
-    # store.add(docs) # pass text of instruction
-
-    # res = pipeline(code, store)
+    doc = get_text_from_pdf(instructions)
+    store = StorageBM()
+    store.add(doc)
+    res = pipeline("code", store)
 
 
     send = {

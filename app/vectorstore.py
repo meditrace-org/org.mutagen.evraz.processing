@@ -1,4 +1,4 @@
-from chunking import split_docs
+from app.chunking import split_docs
 from settings import settings
 import bm25s
 import Stemmer

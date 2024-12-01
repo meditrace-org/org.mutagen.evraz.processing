@@ -39,7 +39,7 @@ def on_message(channel: BlockingChannel, method: Basic.Deliver,
     # store = StorageBM()
     # store.add(docs) # pass text of instruction
 
-    # res = pipeline(chunks) # pass list od chunks
+    # res = pipeline(code, store)
 
 
     send = {

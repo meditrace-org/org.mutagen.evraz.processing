@@ -3,11 +3,10 @@ from langchain_core.output_parsers import PydanticOutputParser
 from langchain_core.prompts import ChatPromptTemplate
 from langchain.docstore.document import Document
 from model import APIModel
+from chunking import split_code2docs
 from settings import prompts, settings
 from typing import List, Optional
 from pydantic import BaseModel, Field
-from vectorstore import store
-
 
 
 # Pydantic
@@ -54,7 +53,7 @@ class Pipeline:
  
         self.chain = prompt | code_reviewer | parser
 
-    def execute(self, chunk: str):
+    def execute(self, chunk: str, store):
         query = self.docs_helper(chunk)
         print(query)
         docs = store.get(query) 
@@ -62,13 +61,14 @@ class Pipeline:
         return self.chain.invoke(chunk)
     
 
-    def __call__(self, chunks: List[str], store):
+    def __call__(self, code: str, store):
 
+        chunks = split_code2docs(code)
         self.history = []
         rating = 0
         for chunk in chunks:
             try:
-                output = self.execute(chunk)
+                output = self.execute(chunk, store)
                 self.history.append(
                 {
                 "chunk": chunk,

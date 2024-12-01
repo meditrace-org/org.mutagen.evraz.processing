@@ -1,8 +1,3 @@
-from langchain_text_splitters import (
-    Language,
-    RecursiveCharacterTextSplitter,
-)
-from langchain.docstore.document import Document
 from typing import List
 from __future__ import annotations
 from tree_sitter_languages import get_language, get_parser

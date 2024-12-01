@@ -35,8 +35,11 @@ def on_message(channel: BlockingChannel, method: Basic.Deliver,
     logging.info(f"Going to process {id}")
     target_file = value["target_file_url"]
     instructions = value["instructions_file_url"]
-    last_date = value["last_modified_dttm"]
-    chunks = split_proj_to_chunks(id, target_file)
+    last_date = value.get("last_modified_dttm")
+    chunks, max_dttm_from_files = split_proj_to_chunks(id, target_file)
+
+    if not last_date:
+        last_date = max_dttm_from_files
 
     doc = get_text_from_pdf(instructions)
     store = StorageBM()

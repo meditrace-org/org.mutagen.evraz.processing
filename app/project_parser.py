@@ -93,6 +93,7 @@ class ProjectParser:
         except Exception as e:
             print(f"Ошибка чтения файла {file_path}: {e}")
 
+
     def check_last_modify_time(self, file_path):
         cur_unix = os.path.getmtime(file_path)
 
@@ -124,8 +125,9 @@ class ProjectParser:
 
 
 def split_proj_to_chunks(id: str, target_file_url: str):
-    parsed_files_by_lang = ProjectParser(id, target_file_url).parse()
+    parser = ProjectParser(id, target_file_url)
+    parsed_files_by_lang = parser.parse()
     chunks = []
     for lang, content in parsed_files_by_lang:
         chunks.append(split_code2docs(content, lang))
-    return chunks
+    return chunks, parser.last_modified_dttm

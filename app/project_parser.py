@@ -28,7 +28,7 @@ class ProjectParser:
             import shutil
             shutil.rmtree(self._proj_dir)
 
-        return self._union_all_project_files()
+        return self._merged_files
 
 
     def _get_default_extensions(self):
@@ -106,5 +106,8 @@ class ProjectParser:
 
 
 def split_proj_to_chunks(id: str, target_file_url: str):
-    parsed_content = ProjectParser(id, target_file_url).parse()
-    return split_code2docs(parsed_content)
+    parsed_files_by_lang = ProjectParser(id, target_file_url).parse()
+    chunks = []
+    for lang, content in parsed_files_by_lang:
+        chunks.append(split_code2docs(content, lang))
+    return chunks

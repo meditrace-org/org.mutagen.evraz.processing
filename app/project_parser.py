@@ -1,7 +1,7 @@
 import json
 import os
 from collections import defaultdict
-
+from chunking import split_code2docs
 import requests
 import zipfile
 
@@ -103,3 +103,8 @@ class ProjectParser:
         while lines and not lines[-1].strip():
             lines.pop()
         return '\n'.join(lines)
+
+
+def split_proj_to_chunks(id: str, target_file_url: str):
+    parsed_content = ProjectParser(id, target_file_url).parse()
+    return split_code2docs(parsed_content)

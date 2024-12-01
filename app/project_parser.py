@@ -1,6 +1,9 @@
+import datetime
 import json
 import os
 from collections import defaultdict
+from datetime import timedelta
+
 from chunking import split_code2docs
 import requests
 import zipfile
@@ -17,6 +20,8 @@ class ProjectParser:
 
         self._merged_files = None
         self._proj_dir = None
+        self._max_unix = 0
+        self.last_modified_dttm = None
         self._extensions = exts or self._get_default_extensions()
 
 
@@ -82,10 +87,23 @@ class ProjectParser:
         rel_path = os.path.relpath(str(file_path), self._proj_dir)
         try:
             with open(file_path, "r", encoding="utf-8") as f:
+                self.check_last_modify_time(file_path)
                 file_content = self._strip_empty_lines(f.read())
                 self._merged_files[language] += f"{rel_path}\n```\n{file_content}\n```\n\n"
         except Exception as e:
             print(f"Ошибка чтения файла {file_path}: {e}")
+
+    def check_last_modify_time(self, file_path):
+        cur_unix = os.path.getmtime(file_path)
+
+        if cur_unix > self._max_unix:
+            self._max_unix = cur_unix
+
+            last_modified_time = datetime.datetime.fromtimestamp(cur_unix)
+            timezone_offset = datetime.timedelta(hours=3)
+            last_modified_time = last_modified_time.replace(tzinfo=datetime.timezone(timezone_offset))
+
+            self.last_modified_dttm = last_modified_time.isoformat()
 
 
     def _union_all_project_files(self):

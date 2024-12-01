@@ -34,7 +34,7 @@ class Prompts(BaseSettings):
     """.strip()
 
     summarier: str = """
-    Instruction: Write brief summary of code review using these remarks. If code is good or has errors always say about it.
+    Инструкция: Напишите краткое резюме проверки кода, используя эти замечания. Если код хорош или в нем есть ошибки, всегда говори об этом. Пиши на русском языке.
     """.strip()
 
 

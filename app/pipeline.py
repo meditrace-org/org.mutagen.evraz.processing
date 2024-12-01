@@ -91,4 +91,4 @@ class Pipeline:
         self.history = []
         review = self.summary(total)
         
-        return review + '\n' + total
+        return """Дата последнего изменения проекта: {}\n""" + review + '\n' + total
